@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:latest
+    container_name: simulation-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+  weather-api:
+    depends_on:
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - REDIS_CLIENT=redis:6379
+
+volumes:
+  simulation_database:
+    driver: local
